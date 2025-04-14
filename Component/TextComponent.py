@@ -7,8 +7,8 @@ class TextComponent:
         self.index = index
 
     def DebugTranslate(self):
-        # 这里可以添加翻译功能
-        self.origin.replace_with("中文....")
+        txt = self.origin.get_text()
+        self.origin.replace_with(f"DebugTranslate:{txt}")
     
     # 接收翻译完成的文本
     def _translate_complated(self,translate):
@@ -16,4 +16,4 @@ class TextComponent:
 
     # 发送翻译请求
     def send_to_translate_service(self,translator:TranslateComponent.Translator_v2):
-        translator.collection_string(self.origin.strip(),callback=self._translate_complated)
+        translator.collection_string(self.origin.get_text().strip(),callback=self._translate_complated)

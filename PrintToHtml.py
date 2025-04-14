@@ -18,13 +18,19 @@ def main_sync(url):
     # 发送HTTP请求并获取响应
     response = requests.get(url)
 
+    # 获取文件名（URL的最后一部分）
+    fileName = url.split('/')[-1]
+
     # Check if the request was successful
     if response.status_code == 200:
         # 解析网页内容
         soup = BeautifulSoup(response.content, 'html.parser')
 
+        # extactor 2 debug
+        # Tools.ExtractorWithOutOrder(soup)
+
         # 提取网页的图片和文本
-        results = Tools.Extractor(soup, start_tag='main',refuse_tags={'meta','script','link'})
+        results = Tools.Extractor(soup, start_tag='main',refuse_tags={'meta','script','link','code','style','svg','canvas','video','audio','iframe','a'})
 
         # 调试输出
         # debug_html(soup, results)
@@ -40,13 +46,12 @@ def main_sync(url):
                 component.send_to_translate_service(translator)
             elif isinstance(component,Tools.ImageComponent.ImageLoader):
                 component.send_to_image_download_service()
-                pass
 
         # 翻译文本
         translator.translating()
 
         # 重新保存为html
-        with open('output.html', 'w', encoding='utf-8') as f:
+        with open(f'{fileName}.html', 'w', encoding='utf-8') as f:
             f.write(soup.prettify())
         
         print(f"Successfully fetched the URL: {url}")
